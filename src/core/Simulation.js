@@ -490,6 +490,30 @@ export class Simulation {
     this.trails.clearArchived();
   }
 
+  setSeed(seed) {
+    this.config.seed = seed;
+    this.random.reset(seed);
+    this.evolver = new Evolver({
+      topology: this.config.topology,
+      config: this.config.evolution,
+      random: this.random,
+    });
+    this.generation = 1;
+    this.generationTime = 0;
+    this.accumulator = 0;
+    this.paused = false;
+    this.selectedOrganism = null;
+    this.selectedPredator = null;
+    this.rule.reset();
+    this.obstacleManager.rebuild();
+    this.foodManager.reset();
+    this.predatorManager.reset();
+    const genomes = this.evolver.createInitialPopulation(this.config.populationSize);
+    this.reuseGeneration(genomes);
+    this.trails.clearArchived();
+    this.resetGenerationStats();
+  }
+
   placeAt(mode, position) {
     if (!this.isInsideArena(position)) {
       return;

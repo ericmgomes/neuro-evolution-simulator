@@ -91,6 +91,12 @@ const PANEL_DEFINITIONS = [
       ['selectedObstacleDistance', 'Obst.'],
     ],
   },
+  {
+    id: 'help',
+    title: 'Help',
+    position: 'top-center',
+    content: 'help',
+  },
 ];
 
 export class HUD {
@@ -99,6 +105,7 @@ export class HUD {
     config,
     onTogglePause,
     onReset,
+    onNewSeed,
     onSpeedChange,
     onArenaSizeChange,
     onFoodCountChange,
@@ -111,6 +118,7 @@ export class HUD {
     this.config = config;
     this.onTogglePause = onTogglePause;
     this.onReset = onReset;
+    this.onNewSeed = onNewSeed;
     this.onSpeedChange = onSpeedChange;
     this.onArenaSizeChange = onArenaSizeChange;
     this.onFoodCountChange = onFoodCountChange;
@@ -122,7 +130,7 @@ export class HUD {
     this.panelButtons = new Map();
     this.panels = new Map();
     this.container = null;
-    this.hidden = false;
+    this.hidden = true;
     this.visiblePanels = new Set(['simulation', 'population', 'compare', 'controls']);
   }
 
@@ -133,13 +141,15 @@ export class HUD {
     this.root.appendChild(this.container);
     this.cacheElements();
     this.bindControls();
+    this.container.classList.add('is-hidden');
+    this.hudToggleButton.textContent = 'Show';
     this.syncPanelVisibility();
   }
 
   getTemplate() {
     return `
       <nav class="hud-context-bar" aria-label="Painéis do HUD">
-        <button class="hud-toggle" type="button" data-action="toggle-hud">HUD</button>
+        <button class="hud-toggle" type="button" data-action="toggle-hud">Show</button>
         ${PANEL_DEFINITIONS.map((panel) => this.panelToggle(panel)).join('')}
         <button class="hud-chip is-active" type="button" data-panel-toggle="controls">Editor</button>
       </nav>
@@ -159,6 +169,10 @@ export class HUD {
   }
 
   panel(panel) {
+    if (panel.content === 'help') {
+      return this.helpPanel(panel);
+    }
+
     return `
       <section class="hud-panel hud-panel-${panel.position}" data-panel="${panel.id}">
         <header class="hud-panel-header">
@@ -166,6 +180,23 @@ export class HUD {
           <button class="hud-panel-close" type="button" data-panel-close="${panel.id}">x</button>
         </header>
         <div class="metric-grid">${panel.metrics.map(([key, label]) => this.metric(key, label)).join('')}</div>
+      </section>
+    `;
+  }
+
+  helpPanel(panel) {
+    return `
+      <section class="hud-panel hud-panel-${panel.position} hud-help-panel" data-panel="${panel.id}">
+        <header class="hud-panel-header">
+          <span>${panel.title}</span>
+          <button class="hud-panel-close" type="button" data-panel-close="${panel.id}">x</button>
+        </header>
+        <div class="help-content">
+          <p><strong>EvoLab</strong> é uma sandbox de evolução artificial em tempo real.</p>
+          <p>Os organismos nascem com cérebros neurais simples, procuram comida, evitam predadores, lagos, montanhas e a borda do mapa.</p>
+          <p>No fim de cada geração, os melhores genomas geram descendentes com crossover e pequenas mutações.</p>
+          <p>Use o Editor para pausar, mudar velocidade, ajustar mapa/comida, trocar a rede neural e colocar comida ou obstáculos manualmente.</p>
+        </div>
       </section>
     `;
   }
@@ -181,6 +212,7 @@ export class HUD {
           <button class="hud-button" type="button" data-action="pause">Pause</button>
           <button class="hud-button" type="button" data-action="reset">Reset</button>
         </div>
+        <button class="hud-button" type="button" data-action="new-seed">Nova Seed</button>
         <div class="placement-row">
           <button class="hud-button" type="button" data-place="food">Comida</button>
           <button class="hud-button" type="button" data-place="mountain">Montanha</button>
@@ -268,6 +300,9 @@ export class HUD {
     this.container
       .querySelector('[data-action="reset"]')
       .addEventListener('click', () => this.onReset());
+    this.container
+      .querySelector('[data-action="new-seed"]')
+      .addEventListener('click', () => this.onNewSeed());
     this.container.querySelector('#sim-speed').addEventListener('input', (event) => {
       const value = Number(event.target.value);
       this.speedValue.textContent = `${value.toFixed(2).replace(/\.00$/, '')}x`;
@@ -390,7 +425,7 @@ export class HUD {
   toggleHud() {
     this.hidden = !this.hidden;
     this.container.classList.toggle('is-hidden', this.hidden);
-    this.hudToggleButton.textContent = this.hidden ? 'Mostrar HUD' : 'HUD';
+    this.hudToggleButton.textContent = this.hidden ? 'Show' : 'Hide';
   }
 
   requestTopologyChange(presetId) {

@@ -1,8 +1,9 @@
 export const SIMULATION_CONFIG = {
   seed: 918273,
+  randomizeSeedOnBoot: true,
   populationSize: 200,
   generationDuration: 20,
-  arenaSize: 48,
+  arenaSize: 56,
   maxAge: 90,
   topology: [14, 16, 6],
   neuralPresets: [
@@ -28,7 +29,7 @@ export const SIMULATION_CONFIG = {
     },
   ],
   speed: {
-    defaultMultiplier: 8,
+    defaultMultiplier: 10,
     simulationScale: 1,
     fixedStep: 0.08,
     maxSubsteps: 8,
@@ -49,11 +50,13 @@ export const SIMULATION_CONFIG = {
     reward: 9,
   },
   obstacles: {
+    lakes: 3,
+    mountains: 3,
     lakePenalty: 0.25,
     mountainPenalty: 10,
   },
   trails: {
-    visible: false,
+    visible: true,
     preserveHistory: false,
     maxArchivedGenerations: 5,
   },

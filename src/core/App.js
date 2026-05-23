@@ -9,6 +9,7 @@ export class App {
   constructor({ root, config = SIMULATION_CONFIG }) {
     this.root = root;
     this.config = config;
+    this.applyBootSeed();
     this.shell = null;
     this.renderer = null;
     this.world = null;
@@ -43,6 +44,7 @@ export class App {
       config: this.config,
       onTogglePause: () => this.simulation.togglePause(),
       onReset: () => this.reset(),
+      onNewSeed: () => this.newSeed(),
       onSpeedChange: (speed) => this.simulation.setSpeed(speed),
       onArenaSizeChange: (arenaSize) => this.setArenaSize(arenaSize),
       onFoodCountChange: (foodCount) => this.simulation.setFoodCount(foodCount),
@@ -62,6 +64,26 @@ export class App {
     this.shell = document.createElement('main');
     this.shell.className = 'sim-shell';
     this.root.appendChild(this.shell);
+    this.createHeader();
+  }
+
+  applyBootSeed() {
+    if (!this.config.randomizeSeedOnBoot) {
+      return;
+    }
+
+    this.config.seed = this.createSeed();
+  }
+
+  createSeed() {
+    return Math.floor(Math.random() * 1_000_000_000);
+  }
+
+  createHeader() {
+    const header = document.createElement('header');
+    header.className = 'app-header';
+    header.textContent = 'EvoLab';
+    this.shell.appendChild(header);
   }
 
   loop() {
@@ -95,6 +117,13 @@ export class App {
   reset() {
     this.world.reset();
     this.simulation.reset();
+  }
+
+  newSeed() {
+    const seed = this.createSeed();
+    this.config.seed = seed;
+    this.world.setSeed(seed);
+    this.simulation.setSeed(seed);
   }
 
   setArenaSize(arenaSize) {

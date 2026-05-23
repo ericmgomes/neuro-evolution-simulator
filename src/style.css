@@ -43,6 +43,20 @@ select {
   height: 100%;
 }
 
+.app-header {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 24;
+  color: #f4f7fa;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  text-transform: uppercase;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.72);
+}
+
 .hud {
   position: absolute;
   inset: 0;
@@ -56,7 +70,7 @@ select {
 .hud-context-bar {
   position: absolute;
   top: 12px;
-  left: 12px;
+  left: 104px;
   right: 12px;
   display: flex;
   flex-wrap: wrap;
@@ -166,6 +180,12 @@ select {
   right: 12px;
 }
 
+.hud-panel-top-center {
+  top: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .hud-panel-right-center {
   top: 50%;
   right: 12px;
@@ -228,6 +248,26 @@ select {
   font-weight: 700;
   line-height: 1.1;
   overflow-wrap: anywhere;
+}
+
+.hud-help-panel {
+  width: min(420px, calc(100vw - 24px));
+}
+
+.help-content {
+  display: grid;
+  gap: 8px;
+  color: #c8d2da;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.help-content p {
+  margin: 0;
+}
+
+.help-content strong {
+  color: #ffffff;
 }
 
 .control-row {
@@ -295,6 +335,11 @@ select {
   margin-top: 8px;
 }
 
+.hud-panel-controls > .hud-button {
+  width: 100%;
+  margin-top: 8px;
+}
+
 .hud-button {
   min-height: 36px;
   border: 1px solid rgba(244, 247, 250, 0.16);
@@ -323,12 +368,20 @@ select {
     top: 8px;
     left: 8px;
     right: 8px;
+    padding-top: 30px;
+  }
+
+  .app-header {
+    top: 8px;
+    left: 8px;
+    font-size: 14px;
   }
 
   .hud-panel,
   .hud-panel-top-left,
   .hud-panel-top-left.second,
   .hud-panel-top-right,
+  .hud-panel-top-center,
   .hud-panel-right-center,
   .hud-panel-left-center,
   .hud-panel-bottom-left,

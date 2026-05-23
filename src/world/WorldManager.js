@@ -53,6 +53,13 @@ export class WorldManager {
     this.rebuildVisuals();
   }
 
+  setSeed(seed) {
+    this.config.seed = seed;
+    this.generator = new ProceduralGenerator({ seed });
+    this.rebuildVisuals();
+    this.reset();
+  }
+
   clearVisuals() {
     while (this.group.children.length > 0) {
       const child = this.group.children.pop();

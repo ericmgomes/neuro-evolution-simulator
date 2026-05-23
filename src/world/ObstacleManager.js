@@ -35,34 +35,75 @@ export class ObstacleManager {
   }
 
   createLakes() {
-    const size = this.config.arenaSize;
     const material = this.createLakeMaterial();
-    const specs = [
-      { x: -size * 0.18, z: -size * 0.02, radius: size * 0.08, depth: 0.38 },
-      { x: size * 0.2, z: size * 0.12, radius: size * 0.07, depth: 0.34 },
-    ];
 
-    for (const spec of specs) {
-      this.tryAddLake(spec, material);
-    }
+    this.createRandomObstacles(this.config.obstacles.lakes, () => {
+      const spec = this.createRandomLakeSpec();
+      return this.tryAddLake(spec, material);
+    });
 
     material.dispose();
   }
 
   createMountains() {
-    const size = this.config.arenaSize;
     const material = this.createMountainMaterial();
-    const specs = [
-      { x: -size * 0.3, z: size * 0.16, radius: size * 0.08, height: size * 0.12 },
-      { x: size * 0.08, z: -size * 0.26, radius: size * 0.07, height: size * 0.1 },
-      { x: size * 0.32, z: size * 0.28, radius: size * 0.07, height: size * 0.11 },
-    ];
 
-    for (const spec of specs) {
-      this.tryAddMountain(spec, material);
-    }
+    this.createRandomObstacles(this.config.obstacles.mountains, () => {
+      const spec = this.createRandomMountainSpec();
+      return this.tryAddMountain(spec, material);
+    });
 
     material.dispose();
+  }
+
+  createRandomObstacles(count, create) {
+    let created = 0;
+    let attempts = 0;
+    const maxAttempts = count * 40;
+
+    while (created < count && attempts < maxAttempts) {
+      attempts += 1;
+
+      if (!create()) {
+        continue;
+      }
+
+      created += 1;
+    }
+  }
+
+  createRandomLakeSpec() {
+    const size = this.config.arenaSize;
+    const position = this.getRandomMapPoint(size * 0.28);
+
+    return {
+      x: position.x,
+      z: position.z,
+      radius: size * this.random.range(0.055, 0.085),
+      depth: this.random.range(0.32, 0.52),
+    };
+  }
+
+  createRandomMountainSpec() {
+    const size = this.config.arenaSize;
+    const position = this.getRandomMapPoint(size * 0.3);
+
+    return {
+      x: position.x,
+      z: position.z,
+      radius: size * this.random.range(0.055, 0.08),
+      height: size * this.random.range(0.09, 0.14),
+    };
+  }
+
+  getRandomMapPoint(maxRadius) {
+    const angle = this.random.range(-Math.PI, Math.PI);
+    const distance = Math.sqrt(this.random.next()) * maxRadius;
+
+    return {
+      x: Math.sin(angle) * distance,
+      z: Math.cos(angle) * distance,
+    };
   }
 
   addLakeAt(position) {
