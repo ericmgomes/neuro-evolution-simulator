@@ -3,7 +3,7 @@ export const SIMULATION_CONFIG = {
   randomizeSeedOnBoot: true,
   populationSize: 200,
   generationDuration: 20,
-  arenaSize: 56,
+  arenaSize: 64,
   maxAge: 90,
   topology: [14, 16, 6],
   neuralPresets: [
@@ -29,7 +29,7 @@ export const SIMULATION_CONFIG = {
     },
   ],
   speed: {
-    defaultMultiplier: 10,
+    defaultMultiplier: 12,
     simulationScale: 1,
     fixedStep: 0.08,
     maxSubsteps: 8,
